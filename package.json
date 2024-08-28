@@ -3,16 +3,21 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev:server": "tsx --watch src/server.ts"
+    "dev:server": "tsx --watch -r module-alias/register src/server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "fastify": "^4.28.1"
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "module-alias": "^2.2.3",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/node": "^22.5.1",
+    "eslint": "^9.9.1",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4"
   }
