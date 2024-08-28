@@ -1,3 +1,4 @@
+import { fileManager, model } from '@/lib/google/generate-ai';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fs from 'fs';
 import path from 'path';
@@ -39,7 +40,43 @@ export async function upload(request: FastifyRequest, reply: FastifyReply) {
 
     const tempLink = `http://localhost:3333/image/${fileName}`;
 
-    reply.send({ link: tempLink });
+    const uploadResponse = await fileManager.uploadFile(filePath, {
+      mimeType: 'image/png',
+      displayName: `${fileName}`,
+    });
+
+    const fileUri = uploadResponse.file.uri;
+
+    const result = await model.generateContent([
+      {
+        fileData: {
+          mimeType: 'image/png',
+          fileUri,
+        },
+      },
+      {
+        text: `
+      extract the measurement from ${measure_type} from the meter in the image`,
+      },
+    ]);
+
+    const extractMeasurementText = (text: string): string | null => {
+      const regex = /\d+(\.\d+)?\s*[^\n]*/;
+      const match = text.match(regex);
+      return match ? match[0].trim() : null;
+    };
+
+    const responseText =
+      result.response?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const measure_uuid = 'generated-guid';
+
+    const measure_value = extractMeasurementText(responseText);
+
+    reply.send({
+      tempLink,
+      measure_value,
+      measure_uuid,
+    });
   } catch (err) {
     throw err;
   }
