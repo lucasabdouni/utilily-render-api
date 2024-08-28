@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@fastify/static": "^7.0.4",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
     "module-alias": "^2.2.3",
