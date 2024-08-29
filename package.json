@@ -1,5 +1,5 @@
 {
-  "name": "utilily-render-api",
+  "name": "utility-render-api",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "@fastify/static": "^7.0.4",
     "@google/generative-ai": "^0.17.1",
     "@prisma/client": "^5.19.0",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
     "module-alias": "^2.2.3",
