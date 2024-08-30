@@ -25,7 +25,6 @@ export class GetMeasuresByCustomerUseCase {
     );
 
     if (!customer) {
-      throw new Error('Customer not found');
       throw new ClientError(
         404,
         'CUSTOMER_NOT_FOUND',
