@@ -15,15 +15,15 @@ A Utility Render API é projetada para gerenciar medições de água e gás atra
 
 POST /create: Cria uma nova medição.
 - Parâmetros de Entrada:
---image (string, obrigatório): Imagem em Base64 contendo a medição.
---customer_code: (string, obrigatório): Código único do cliente.
---measure_datetime: (Date, obrigatório): Data da medição.
---measure_type: (String [WATER | GAS], obrigatório): Tipo de medição.
+- image (string, obrigatório): Imagem em Base64 contendo a medição.
+- customer_code: (string, obrigatório): Código único do cliente.
+- measure_datetime: (Date, obrigatório): Data da medição.
+- measure_type: (String [WATER | GAS], obrigatório): Tipo de medição.
 
 PATCH /confirm: Confirma uma medição.
 - Parâmetros de Entrada:
---measure_uuid: (String, obrigatório): Código da medição realizada.
---confirmed_value: (Number, obrigatório): Confirmação ou correção do valor de leitura.
+- measure_uuid: (String, obrigatório): Código da medição realizada.
+- confirmed_value: (Number, obrigatório): Confirmação ou correção do valor de leitura.
 
 GET /list: Lista medições realizadas por um cliente.
 
