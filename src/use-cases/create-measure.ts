@@ -1,5 +1,4 @@
 import { ClientError } from '@/errors/client-error';
-import { extractMeasurementText } from '@/helpers/extract-measure-number';
 import { CustomerRepository } from '@/repositories/customer-repository';
 import { GenerateMeasureRepository } from '@/repositories/generate-measure-repository';
 import { Measure } from '@prisma/client';
@@ -8,6 +7,8 @@ import dayjs from 'dayjs';
 import fs from 'fs';
 import path from 'path';
 import { MeasureRepository } from '../repositories/measure-repository';
+
+import { extractMeasurementText } from '@/helpers/extract-measure-number';
 
 interface CreateMeasureUseCaseRequest {
   image: string;
@@ -70,32 +71,21 @@ export class CreateMeasureUseCase {
 
     fs.writeFileSync(filePath, buffer);
 
-    const uploadResponse = await this.generateMeasureRepository.uploadFile(
-      filePath,
-      {
-        mimeType: 'image/png',
-        displayName: filePath.split('/').pop() || '',
-      },
-    );
-
-    const mimeType = uploadResponse.file.mimeType;
-    const fileUri = uploadResponse.file.uri;
-
     const result = await this.generateMeasureRepository.generateContent(
-      fileUri,
-      mimeType,
+      convertImgBase64,
       measure_type,
     );
 
-    if (result)
+    const response = await result.response;
+
+    const responseText = response.text();
+
+    if (!responseText)
       throw new ClientError(
         500,
         'VISION_ERROR',
         'Não foi possível processar a imagem. Por favor, tente novamente.',
       );
-
-    const responseText =
-      result.response?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
 
     const measure_value = extractMeasurementText(responseText);
 

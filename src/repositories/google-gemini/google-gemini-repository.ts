@@ -9,21 +9,21 @@ export class GoogleGeminiRepository implements GenerateMeasureRepository {
     return await fileManager.uploadFile(filePath, options);
   }
 
-  async generateContent(
-    fileUri: string,
-    mimeType: string,
-    measureType: string,
-  ): Promise<any> {
-    return await model.generateContent([
+  async generateContent(ImgBase64: string, measure_type: string): Promise<any> {
+    const promptConfig = [
       {
-        fileData: {
-          mimeType,
-          fileUri,
+        text: `extract the measurement from ${measure_type} from the meter in the image`,
+      },
+      {
+        inlineData: {
+          mimeType: 'image/png',
+          data: ImgBase64,
         },
       },
-      {
-        text: `extract the measurement from ${measureType} from the meter in the image`,
-      },
-    ]);
+    ];
+
+    return await model.generateContent({
+      contents: [{ role: 'user', parts: promptConfig }],
+    });
   }
 }
