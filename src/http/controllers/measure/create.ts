@@ -14,7 +14,9 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     ),
     customer_code: z.string({ message: 'Invalid customer code' }),
     measure_datetime: z.coerce.date({ message: 'Invalid datetime' }),
-    measure_type: z.enum(['WATER', 'GAS']),
+    measure_type: z.enum(['WATER', 'GAS'], {
+      message: 'Tipo de medição não permitida',
+    }),
   });
 
   const data = uploadBodySchema.parse(request.body);

@@ -1,3 +1,4 @@
+import { ClientError } from '@/errors/client-error';
 import {
   CustomerRepository,
   MensuaresByCustomer,
@@ -25,10 +26,19 @@ export class GetMeasuresByCustomerUseCase {
 
     if (!customer) {
       throw new Error('Customer not found');
+      throw new ClientError(
+        404,
+        'CUSTOMER_NOT_FOUND',
+        'Nenhum customer encontrado',
+      );
     }
 
     if (customer.measures.length < 0) {
-      throw new Error('Nenhuma leitura encontrada');
+      throw new ClientError(
+        404,
+        'MEASURES_NOT_FOUND',
+        'Nenhuma leitura encontrada',
+      );
     }
 
     return { customer };

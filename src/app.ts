@@ -1,5 +1,6 @@
 import fastify from 'fastify';
 import path from 'path';
+import { errorHandler } from './error-handler';
 import { customerRoutes } from './http/controllers/customer/route';
 import { readingRoutes } from './http/controllers/measure/route';
 
@@ -14,3 +15,5 @@ app.register(require('@fastify/static'), {
   root: directoryPath,
   prefix: '/image/',
 });
+
+app.setErrorHandler(errorHandler);

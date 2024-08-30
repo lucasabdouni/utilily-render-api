@@ -1,7 +1,9 @@
+import { ClientError } from '@/errors/client-error';
 import { extractMeasurementText } from '@/helpers/extract-measure-number';
 import { CustomerRepository } from '@/repositories/customer-repository';
 import { GenerateMeasureRepository } from '@/repositories/generate-measure-repository';
 import { Measure } from '@prisma/client';
+import { randomUUID } from 'crypto';
 import dayjs from 'dayjs';
 import fs from 'fs';
 import path from 'path';
@@ -45,12 +47,17 @@ export class CreateMeasureUseCase {
           startOfMonth,
           endOfMonth,
         );
-      if (existingMeasure) throw new Error('Leitura do mês já realizada.');
+      if (existingMeasure)
+        throw new ClientError(
+          409,
+          'DOUBLE_REPORT',
+          'Leitura do mês já realizada.',
+        );
     } else {
       customer = await this.customerRepository.create({ customer_code });
     }
 
-    const fileName = `${customer_code}-${measure_datetime.getTime()}-${measure_type}.png`;
+    const fileName = `${customer_code}-${randomUUID()}-${measure_type}.png`;
     const convertImgBase64 = image.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(convertImgBase64, 'base64');
 
@@ -80,7 +87,12 @@ export class CreateMeasureUseCase {
       measure_type,
     );
 
-    if (result) throw new Error('Erro ao realizar a leitura.');
+    if (result)
+      throw new ClientError(
+        500,
+        'VISION_ERROR',
+        'Não foi possível processar a imagem. Por favor, tente novamente.',
+      );
 
     const responseText =
       result.response?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
@@ -88,7 +100,11 @@ export class CreateMeasureUseCase {
     const measure_value = extractMeasurementText(responseText);
 
     if (measure_value === null)
-      throw new Error('Não foi encontrado um valor na medição.');
+      throw new ClientError(
+        422,
+        'UNPROCESSABLE_ENTITY',
+        'Não foi possível processar ou encontrar medição na imagem enviada.',
+      );
 
     const image_url = `http://localhost:3333/image/${fileName}`;
 

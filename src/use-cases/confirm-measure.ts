@@ -1,3 +1,4 @@
+import { ClientError } from '@/errors/client-error';
 import { MeasureRepository } from '@/repositories/measure-repository';
 import { Measure, Prisma } from '@prisma/client';
 
@@ -20,10 +21,19 @@ export class ConfirmMeasuresUseCase {
       measure_uuid,
     );
 
-    if (!checkMeasure) throw new Error('Leitura não encontrada.');
+    if (!checkMeasure)
+      throw new ClientError(
+        404,
+        'MEASURE_NOT_FOUND',
+        'Leitura não encontrada.',
+      );
 
     if (checkMeasure.has_confirmed)
-      throw new Error('Leitura do mês já realizada.');
+      throw new ClientError(
+        422,
+        'CONFIRMATION_DUPLICATE',
+        'Leitura do mês já realizada.',
+      );
 
     const data: Prisma.MeasureUpdateInput = {
       measure_value: confirmed_value,
