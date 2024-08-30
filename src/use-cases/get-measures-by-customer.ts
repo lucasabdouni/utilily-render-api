@@ -32,7 +32,10 @@ export class GetMeasuresByCustomerUseCase {
       );
     }
 
-    if (customer.measures.length < 0) {
+    console.log('aquiiii');
+    console.log(customer);
+
+    if (customer.measures.length === 0) {
       throw new ClientError(
         404,
         'MEASURES_NOT_FOUND',
