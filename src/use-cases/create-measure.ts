@@ -60,16 +60,6 @@ export class CreateMeasureUseCase {
 
     const fileName = `${customer_code}-${randomUUID()}-${measure_type}.png`;
     const convertImgBase64 = image.replace(/^data:image\/\w+;base64,/, '');
-    const buffer = Buffer.from(convertImgBase64, 'base64');
-
-    const directoryPath = path.resolve(__dirname, '../../tmp');
-    const filePath = path.join(directoryPath, fileName);
-
-    if (!fs.existsSync(directoryPath)) {
-      fs.mkdirSync(directoryPath, { recursive: true });
-    }
-
-    fs.writeFileSync(filePath, buffer);
 
     const result = await this.generateMeasureRepository.generateContent(
       convertImgBase64,
@@ -95,6 +85,17 @@ export class CreateMeasureUseCase {
         'UNPROCESSABLE_ENTITY',
         'Não foi possível processar ou encontrar medição na imagem enviada.',
       );
+
+    const buffer = Buffer.from(convertImgBase64, 'base64');
+
+    const directoryPath = path.resolve(__dirname, '../../tmp');
+    const filePath = path.join(directoryPath, fileName);
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+
+    fs.writeFileSync(filePath, buffer);
 
     const image_url = `http://localhost:3333/image/${fileName}`;
 

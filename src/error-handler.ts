@@ -19,12 +19,5 @@ export const errorHandler: FastifyErrorHandler = (error, request, reply) => {
     });
   }
 
-  if (error.name === 'GoogleGenerativeAIFetchError') {
-    return reply.status(500).send({
-      error_code: 'GEMINI_ERROR',
-      error_description:
-        'Erro durante a leitura da image, tente novamente mais tarde.',
-    });
-  }
   return reply.status(500).send({ message: 'Internal server error' });
 };
